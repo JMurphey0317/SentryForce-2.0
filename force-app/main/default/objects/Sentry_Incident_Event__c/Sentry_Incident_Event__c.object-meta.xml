@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Junction object linking correlated incidents to the events they contain.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <label>Sentry Incident Event</label>
+    <nameField>
+        <displayFormat>SIE-{000000}</displayFormat>
+        <label>Sentry Incident Event Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Sentry Incident Events</pluralLabel>
+    <sharingModel>Private</sharingModel>
+</CustomObject>

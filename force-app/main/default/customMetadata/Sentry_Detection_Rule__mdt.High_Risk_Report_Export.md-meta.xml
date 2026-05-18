@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <label>High Risk Report Export</label>
+    <protected>false</protected>
+    <values><field>Rule_Name__c</field><value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">High Risk Report Export</value></values>
+    <values><field>Source_Type__c</field><value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">ReportExport</value></values>
+    <values><field>Filter_JSON__c</field><value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">{"bulkDownload":true}</value></values>
+    <values><field>Risk_Adjustment__c</field><value xsi:type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema">15</value></values>
+    <values><field>Enabled__c</field><value xsi:type="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema">true</value></values>
+    <values><field>Alert_Severity__c</field><value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">High</value></values>
+</CustomMetadata>

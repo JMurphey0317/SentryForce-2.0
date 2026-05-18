@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Replay and reprocessing orchestration state for historical Sentry events.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <label>Sentry Replay Job</label>
+    <nameField>
+        <displayFormat>SRJ-{000000}</displayFormat>
+        <label>Sentry Replay Job Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Sentry Replay Jobs</pluralLabel>
+    <sharingModel>Private</sharingModel>
+</CustomObject>

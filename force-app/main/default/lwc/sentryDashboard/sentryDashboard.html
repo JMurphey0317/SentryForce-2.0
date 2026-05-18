@@ -1,0 +1,64 @@
+<template>
+    <lightning-card title="SentryForce 2.0 SOC Dashboard" icon-name="utility:connected_apps">
+        <div class="slds-p-around_medium slds-grid slds-wrap slds-gutters_small">
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                    <lightning-button-group>
+                        <lightning-button variant="brand" label="Run ELF Retrieval" onclick={handleElfRetrieval}></lightning-button>
+                        <lightning-button label="Refresh Dashboard" onclick={refreshDashboard}></lightning-button>
+                    </lightning-button-group>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3 slds-text-align_right">
+                    <p class="slds-text-title_caps">Streaming channel</p>
+                    <p>{streamingStatus}</p>
+                </div>
+            </div>
+        </div>
+
+        <c-sentry-metrics-cards metrics={metrics}></c-sentry-metrics-cards>
+
+        <div class="slds-grid slds-wrap slds-gutters_small slds-p-horizontal_medium slds-p-bottom_medium">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <c-sentry-live-feed events={events}></c-sentry-live-feed>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <c-sentry-incident-panel incidents={incidents} deliveries={connectorDeliveries}></c-sentry-incident-panel>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <c-sentry-threat-heatmap heatmap={heatmap}></c-sentry-threat-heatmap>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <c-sentry-event-timeline timeline={timeline}></c-sentry-event-timeline>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <lightning-card title="Feature Licensing">
+                    <div class="slds-p-around_medium">
+                        <template for:each={featureLicenses} for:item="feature">
+                            <p key={feature.featureName}>
+                                <strong>{feature.featureName}</strong>: {feature.available}
+                            </p>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <lightning-card title="Queue & Retrieval Telemetry">
+                    <div class="slds-p-around_medium">
+                        <template for:each={queueTelemetry} for:item="metric">
+                            <p key={metric.Id}>{metric.Metric_Type__c} · {metric.Status__c} · depth {metric.Queue_Depth__c}</p>
+                        </template>
+                        <template for:each={retrievalJobs} for:item="job">
+                            <p key={job.Id}>{job.Source__c} · {job.Status__c}</p>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <c-sentry-rule-builder rules={detectionRules}></c-sentry-rule-builder>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <c-sentry-rule-simulator></c-sentry-rule-simulator>
+            </div>
+        </div>
+    </lightning-card>
+</template>

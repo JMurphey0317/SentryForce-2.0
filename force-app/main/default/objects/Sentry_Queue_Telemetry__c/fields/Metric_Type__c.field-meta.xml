@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Metric_Type__c</fullName>
+    <label>Metric Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <value><fullName>Enqueue</fullName><default>true</default><label>Enqueue</label></value>
+            <value><fullName>Completed</fullName><default>false</default><label>Completed</label></value>
+            <value><fullName>Failed</fullName><default>false</default><label>Failed</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,29 @@
+<template>
+    <lightning-card title="Detection Rule Simulator">
+        <div class="slds-p-around_medium slds-grid slds-wrap slds-gutters_small">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                <lightning-input label="Source" value={source} onchange={handleSourceChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                <lightning-input label="Event Type" value={eventType} onchange={handleEventTypeChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                <lightning-input label="Actor Id" value={actorId} onchange={handleActorChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-textarea label="Attributes JSON" value={attributesJson} onchange={handleAttributesChange}></lightning-textarea>
+            </div>
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-button variant="brand" label="Simulate" onclick={runSimulation}></lightning-button>
+            </div>
+            <template if:true={result}>
+                <div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                    <p><strong>Score:</strong> {result.score}</p>
+                    <p><strong>Severity:</strong> {result.severity}</p>
+                    <p><strong>Anomaly Score:</strong> {result.anomalyScore}</p>
+                    <p><strong>Factors:</strong> {factorText}</p>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

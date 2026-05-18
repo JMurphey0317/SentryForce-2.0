@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="Detection Rule Builder">
+        <div class="slds-p-around_medium">
+            <p class="slds-m-bottom_small">Initial admin slice: metadata-backed rule inventory for builder/simulator iteration.</p>
+            <template if:true={rules.length}>
+                <template for:each={rules} for:item="rule">
+                    <p key={rule.developerName}>
+                        <strong>{rule.ruleName}</strong>
+                        · source {rule.sourceType}
+                        · +{rule.riskAdjustment}
+                        · {rule.alertSeverity}
+                    </p>
+                </template>
+            </template>
+            <template if:false={rules.length}>
+                <p>No active rules yet.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

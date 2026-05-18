@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Admin-managed detection rules for source-aware filtering and risk adjustments.</description>
+    <label>Sentry Detection Rule</label>
+    <pluralLabel>Sentry Detection Rules</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
