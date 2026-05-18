@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Event__c</fullName>
+    <label>Last Event</label>
+    <referenceTo>Sentry_Event__c</referenceTo>
+    <relationshipLabel>Last Event Incidents</relationshipLabel>
+    <relationshipName>LastEventIncidents</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

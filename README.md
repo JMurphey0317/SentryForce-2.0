@@ -11,58 +11,60 @@ SentryForce 2.0 is a Salesforce-native observability and security foundation tha
 
 ## What this foundation includes
 
-### 1) Canonical event ingestion model
-- `SentryEventEnvelope` defines a canonical payload for Platform Events, CDC, Event Monitoring, Lightning performance, and Apex execution telemetry.
-- `SentryIngestionService` + `SentryIngestionQueueable` support asynchronous event ingestion and persistence.
-- Canonical event records are stored in `Sentry_Event__c`.
+### 1) Bulkified ingestion and telemetry pipeline
+- `SentryIngestionService` now chunks envelopes at 200 per transaction, aggregates actor activity once per chunk via `SentryActorActivityService`, and shares that activity map across risk evaluation.
+- `SentryTelemetryService` records queue depth, queue latency, and failed queue jobs in `Sentry_Queue_Telemetry__c`.
+- Canonical event records are stored in `Sentry_Event__c` with anomaly enrichment and processing latency metadata.
 
-### 2) Persistent storage model
-- `Sentry_Event__c`: normalized event records, risk score/factors, payload, retention fields.
-- `Sentry_Alert__c`: generated alerts with severity/status/channel and event linkage.
-- `Sentry_Retrieval_Job__c`: ELF/event retrieval job tracking.
-- `Sentry_Integration_Config__mdt`: pluggable integration config (Slack/webhook/SIEM).
-- `Sentry_Retention_Policy__mdt`: retention policy definitions by event type.
+### 2) Correlation engine and incident layer
+- `SentryCorrelationService` evaluates `Sentry_Correlation_Rule__mdt` records and creates/update `Sentry_Incident__c` plus `Sentry_Incident_Event__c` junctions.
+- Sample metadata rule `Credential_Compromise` establishes the first multi-event incident pattern.
+- `Sentry_Alert__c` now links alerts to incidents and supports richer workflow states.
 
-### 3) Async and batch processing
-- Queueable ingestion (`SentryIngestionQueueable`) for burst-safe writes.
-- Batch/scheduled retention management (`SentryRetentionService.CleanupBatch`).
-- Scheduled ELF retrieval service (`SentryElfRetrievalService`).
+### 3) Real-time SOC dashboard scaffolding
+- `force-app/main/default/lwc/sentryDashboard` composes:
+  - `sentryLiveFeed`
+  - `sentryIncidentPanel`
+  - `sentryThreatHeatmap`
+  - `sentryMetricsCards`
+  - `sentryEventTimeline`
+- The dashboard includes EMP API/LMS scaffolding, telemetry panels, licensing indicators, and replay/rule foundations.
+- `sentryForceConsole` now wraps the dashboard component for backward compatibility.
 
-### 4) Threat detection / anomaly scoring
-`SentryRiskEngine` delivers explainable scoring with factors for:
-- credential stuffing patterns
-- session hijacking signals
-- suspicious report exports
-- off-hours sensitive actions
-- Lightning performance degradation
-- long-running Apex + exception spikes
+### 4) Secure integration architecture
+- `SentryNamedCredentialService` resolves Named Credential-based endpoints from `Sentry_Integration_Config__mdt`.
+- `SentryAlertingService` keeps Salesforce-native alert persistence while routing Slack notifications asynchronously and seeding SIEM deliveries into `Sentry_Connector_Delivery__c`.
+- Integration metadata now supports `Integration_Type__c`, `Named_Credential__c`, `External_Credential__c`, `Path_Suffix__c`, and retry limits.
 
-The scoring model is modular so ML enrichment can be added later (external feature service or Einstein integration).
+### 5) Detection rule builder foundations
+- `Sentry_Detection_Rule__mdt` plus `SentryDetectionRuleService` allow metadata-driven risk adjustments.
+- `sentryRuleBuilder` surfaces active rules to admins.
+- `sentryRuleSimulator` calls `SentryMonitoringController.simulateDetection()` for a first working simulation slice.
 
-### 5) Real-time transaction security controls
-The repository includes flow-backed policy metadata in:
-- `force-app/main/default/flows/PolicyCondition_*.flow-meta.xml`
-- `force-app/main/default/transactionSecurityPolicies/*.transactionSecurityPolicy-meta.xml`
+### 6) Alert suppression workflows
+- `Sentry_Suppression_Rule__mdt` drives duplicate, integration-user, and low-risk sandbox suppression.
+- `Sentry_Alert__c.Status__c` now supports `Open → Acknowledged → Investigating → Resolved`.
+- Alerts persist suppression keys and analyst assignment to support lifecycle tracking.
 
-These support real-time block/alert patterns for suspicious behavior and risky actions.
+### 7) SIEM outbound connectors
+- `SentryOutboundConnectorService` stages delivery attempts, retry counts, and dead-letter state in `Sentry_Connector_Delivery__c`.
+- The connector abstraction is wired for representative connector types: Splunk, Datadog, Sentinel, Elastic, and QRadar.
+- Delivery health is exposed on the SOC dashboard.
 
-### 6) Slack alert integration
-`SentryAlertingService` provides pluggable alert dispatching and includes Slack webhook support via custom metadata (`Sentry_Integration_Config__mdt`).
+### 8) Event replay and reprocessing foundations
+- `SentryReplayService` introduces `Sentry_Replay_Job__c`, batch-size throttling, progress tracking, and replay status management.
+- Replayed envelopes are rehydrated from historical `Sentry_Event__c` payloads and sent back through the ingestion pipeline.
+- `SentryMonitoringController.startReplay()` exposes the orchestration entry point for future UI wiring.
 
-### 7) UI monitoring console (LWC)
-`force-app/main/default/lwc/sentryForceConsole` provides a Lightning console surface to:
-- view recent events
-- view recent alerts
-- trigger ELF retrieval
+### 9) Detection analytics dashboards
+- `SentryAnalyticsService` powers metric cards, event timeline data, and actor heatmap data for executive/reliability dashboards.
+- Dashboard metrics now cover open incidents, alert backlog, average risk, and ingestion latency.
+- `SentryFeatureLicenseService` adds feature availability hints for Shield, Event Monitoring, Transaction Security, CDC, and Platform Events.
 
-Controller: `SentryMonitoringController`.
-
-### 8) Extended data retention support
-`SentryRetentionService` resolves per-event retention windows from `Sentry_Retention_Policy__mdt`, and scheduled cleanup marks aging records as compliance-archived.
-
-### 9) Easy ELF retrieval workflows
-- Apex trigger point: `SentryElfRetrievalService.startJobForRecentLogs()`
-- CLI helper script: `scripts/event-monitoring/retrieve-elf.sh`
+### 10) ML anomaly enrichment foundations
+- `SentryAnomalyEnrichmentService` adds behavioral anomaly signals for login-hour drift, API spikes, export-size spikes, and geographic changes.
+- Anomaly score/factors are persisted on `Sentry_Event__c`.
+- The model is enrichment-only and keeps analysts as primary decision makers.
 
 ## Threat and observability use-cases covered
 - Credential stuffing detection
@@ -72,6 +74,9 @@ Controller: `SentryMonitoringController`.
 - Lightning page performance tracking
 - Apex execution latency/exception tracking
 - Event Monitoring/ELF retrieval and operator visibility
+- Multi-event incident correlation
+- Queue latency and connector health visibility
+- Replay-based detection tuning
 
 ## Setup
 
@@ -84,22 +89,32 @@ Controller: `SentryMonitoringController`.
 sf project deploy start --source-dir force-app --target-org <alias>
 ```
 
-### Assign policies and configure Slack
-1. Update `Sentry_Integration_Config__mdt.Slack_Default` with your webhook endpoint and enable it.
-2. Replace placeholder transaction security notification users (`username@company.com`) in `force-app/main/default/transactionSecurityPolicies/*.transactionSecurityPolicy-meta.xml` with valid org usernames/emails.
-3. Update the CI/CD user condition in `force-app/main/default/flows/PolicyCondition_AlertCriticalPermissionAs.flow-meta.xml` (`cicd-username@company.com`) to your environment's deployment user.
-4. Schedule jobs:
+### Configure integrations and operations
+1. Create org-specific Named Credentials / External Credentials for integrations such as `SentryForce_Slack` and grant access through your org permission model.
+2. Update `Sentry_Integration_Config__mdt` records with your Named Credential, external credential, or fallback endpoint values and enable the desired channels.
+3. Replace placeholder transaction security notification users (`username@company.com`) in `force-app/main/default/transactionSecurityPolicies/*.transactionSecurityPolicy-meta.xml` with valid org usernames/emails.
+4. Update the CI/CD user condition in `force-app/main/default/flows/PolicyCondition_AlertCriticalPermissionAs.flow-meta.xml` (`cicd-username@company.com`) to your environment's deployment user.
+5. Schedule jobs:
    - `SentryRetentionService.CleanupBatch`
    - `SentryElfRetrievalService`
+   - `SentryReplayService`
 
 ### Run tests
 ```bash
-sf apex run test --test-level RunLocalTests --target-org <alias>
+sf apex run test --tests SentryRiskEngineTest,SentryIngestionServiceTest,SentryCorrelationServiceTest --target-org <alias>
 ```
 
-## Design lineage
-This repo synthesizes implementation ideas inspired by:
-- `JMurphey0317/SentryMeta1` (ops helper scripting patterns)
-- `JMurphey0317/policy_sentry` and `JMurphey0317/SentryForce` (transaction security + detection concepts)
+## Architectural roadmap mapping
+The repository now reflects the phased roadmap in-order through:
+1. scalable ingestion optimization
+2. incident correlation
+3. live dashboard scaffolding
+4. secure Named Credential abstractions
+5. rule-builder metadata + simulator foundations
+6. suppression workflows
+7. SIEM delivery tracking
+8. replay orchestration
+9. analytics services
+10. anomaly enrichment
 
-SentryForce 2.0 keeps Salesforce-native runtime patterns first, with modular extension points for future ML and external SIEM integrations.
+This pass prioritizes deployable architecture, metadata models, service seams, and initial working slices so the platform can continue iterating without discarding the existing Salesforce-native foundation.

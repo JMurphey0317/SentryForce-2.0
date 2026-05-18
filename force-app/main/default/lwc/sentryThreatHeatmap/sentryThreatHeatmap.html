@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Threat Heatmap">
+        <div class="slds-p-around_medium">
+            <template if:true={heatmap.length}>
+                <template for:each={heatmap} for:item="cell">
+                    <p key={cell.label}>{cell.label} · {cell.value}</p>
+                </template>
+            </template>
+            <template if:false={heatmap.length}>
+                <p>No heatmap data yet.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

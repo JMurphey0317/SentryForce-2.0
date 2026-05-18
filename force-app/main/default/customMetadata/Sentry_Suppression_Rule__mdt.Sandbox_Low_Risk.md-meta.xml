@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <label>Sandbox Low Risk</label>
+    <protected>false</protected>
+    <values><field>Rule_Name__c</field><value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">Sandbox Low Risk</value></values>
+    <values><field>Rule_Type__c</field><value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">LowRiskSandbox</value></values>
+    <values><field>Minimum_Risk__c</field><value xsi:type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema">40</value></values>
+    <values><field>Enabled__c</field><value xsi:type="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema">true</value></values>
+</CustomMetadata>

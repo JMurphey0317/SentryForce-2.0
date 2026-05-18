@@ -2,15 +2,64 @@ public with sharing class SentryRiskEngine {
     public class RiskResult {
         @AuraEnabled public Decimal score;
         @AuraEnabled public List<String> factors;
+        @AuraEnabled public String severity;
+        @AuraEnabled public Decimal anomalyScore;
 
         public RiskResult() {
             this.score = 0;
             this.factors = new List<String>();
+            this.severity = 'Low';
+            this.anomalyScore = 0;
         }
 
         public Boolean isAnomalous() {
-            return score >= 70;
+            return score >= 70 || severity == 'High' || severity == 'Critical';
         }
+
+        public void applyAdjustment(Decimal adjustment, String factor, String requestedSeverity) {
+            if (adjustment != null) {
+                score += adjustment;
+            }
+            if (!String.isBlank(factor) && !factors.contains(factor)) {
+                factors.add(factor);
+            }
+            if (!String.isBlank(requestedSeverity) && severityRank(requestedSeverity) > severityRank(severity)) {
+                severity = requestedSeverity;
+            }
+            finalizeSeverity();
+        }
+
+        public void applyAnomaly(SentryAnomalyEnrichmentService.AnomalyResult anomaly) {
+            if (anomaly == null) {
+                return;
+            }
+            anomalyScore = anomaly.score;
+            for (String factor : anomaly.factors) {
+                if (!factors.contains(factor)) {
+                    factors.add(factor);
+                }
+            }
+            if (anomaly.riskAdjustment != null) {
+                score += anomaly.riskAdjustment;
+            }
+            finalizeSeverity();
+        }
+
+        public void finalizeSeverity() {
+            if (score > 100) {
+                score = 100;
+            }
+            if (severityRank(severity) < severityRank(deriveSeverity(score))) {
+                severity = deriveSeverity(score);
+            }
+        }
+    }
+
+    public static RiskResult evaluate(SentryEventEnvelope eventEnvelope, Map<String, Integer> actorCounts) {
+        Integer actorEventsLastHour = actorCounts == null || String.isBlank(eventEnvelope.actorId) || !actorCounts.containsKey(eventEnvelope.actorId)
+            ? 0
+            : actorCounts.get(eventEnvelope.actorId);
+        return evaluate(eventEnvelope, actorEventsLastHour);
     }
 
     public static RiskResult evaluate(SentryEventEnvelope eventEnvelope, Integer actorEventsLastHour) {
@@ -57,11 +106,37 @@ public with sharing class SentryRiskEngine {
             }
         }
 
-        if (result.score > 100) {
-            result.score = 100;
-        }
-
+        result.finalizeSeverity();
         return result;
+    }
+
+    @TestVisible
+    private static String deriveSeverity(Decimal score) {
+        Decimal normalizedScore = score == null ? 0 : score;
+        if (normalizedScore >= 90) {
+            return 'Critical';
+        }
+        if (normalizedScore >= 70) {
+            return 'High';
+        }
+        if (normalizedScore >= 40) {
+            return 'Medium';
+        }
+        return 'Low';
+    }
+
+    @TestVisible
+    private static Integer severityRank(String severity) {
+        if (severity == 'Critical') {
+            return 4;
+        }
+        if (severity == 'High') {
+            return 3;
+        }
+        if (severity == 'Medium') {
+            return 2;
+        }
+        return 1;
     }
 
     private static Boolean asBoolean(Object value) {

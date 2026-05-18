@@ -1,8 +1,10 @@
 public with sharing class SentryIngestionQueueable implements Queueable {
     private String serializedEnvelopes;
+    private Long enqueuedAtMs;
 
-    public SentryIngestionQueueable(String serializedEnvelopes) {
+    public SentryIngestionQueueable(String serializedEnvelopes, Long enqueuedAtMs) {
         this.serializedEnvelopes = serializedEnvelopes;
+        this.enqueuedAtMs = enqueuedAtMs;
     }
 
     public void execute(QueueableContext context) {
@@ -24,6 +26,16 @@ public with sharing class SentryIngestionQueueable implements Queueable {
             envelopes.add(envelope);
         }
 
-        SentryIngestionService.ingest(envelopes);
+        try {
+            SentryIngestionService.ingest(envelopes, context.getJobId(), enqueuedAtMs);
+        } catch (Exception ex) {
+            SentryTelemetryService.recordQueueFailure(
+                envelopes.size(),
+                context.getJobId(),
+                enqueuedAtMs == null ? null : (System.now().getTime() - enqueuedAtMs),
+                ex
+            );
+            throw ex;
+        }
     }
 }

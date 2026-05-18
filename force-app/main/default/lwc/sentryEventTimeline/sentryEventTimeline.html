@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Event Timeline">
+        <div class="slds-p-around_medium">
+            <template if:true={timeline.length}>
+                <template for:each={timeline} for:item="point">
+                    <p key={point.label}>{point.label} · {point.value} events</p>
+                </template>
+            </template>
+            <template if:false={timeline.length}>
+                <p>No timeline data yet.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

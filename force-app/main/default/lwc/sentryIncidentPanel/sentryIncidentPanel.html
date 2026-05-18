@@ -1,0 +1,26 @@
+<template>
+    <lightning-card title="Incidents & Connector Health">
+        <div class="slds-p-around_medium">
+            <p class="slds-text-title_caps slds-m-bottom_small">Active Incidents</p>
+            <template if:true={incidents.length}>
+                <template for:each={incidents} for:item="incident">
+                    <p key={incident.Id} class="slds-m-bottom_x-small">
+                        <strong>{incident.Severity__c}</strong> · {incident.Status__c} · {incident.Summary__c}
+                    </p>
+                </template>
+            </template>
+            <template if:false={incidents.length}>
+                <p>No incidents yet.</p>
+            </template>
+            <p class="slds-text-title_caps slds-m-vertical_small">Connector Deliveries</p>
+            <template if:true={deliveries.length}>
+                <template for:each={deliveries} for:item="delivery">
+                    <p key={delivery.Id}>{delivery.Connector__c} · {delivery.Status__c} · retry {delivery.Retry_Count__c}</p>
+                </template>
+            </template>
+            <template if:false={deliveries.length}>
+                <p>No connector activity yet.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

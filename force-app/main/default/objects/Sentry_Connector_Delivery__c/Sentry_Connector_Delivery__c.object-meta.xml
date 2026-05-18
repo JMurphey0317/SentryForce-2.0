@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Delivery tracking, retries, and health state for outbound SIEM connector dispatch.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <label>Sentry Connector Delivery</label>
+    <nameField>
+        <displayFormat>SCD-{000000}</displayFormat>
+        <label>Sentry Connector Delivery Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Sentry Connector Deliveries</pluralLabel>
+    <sharingModel>Private</sharingModel>
+</CustomObject>

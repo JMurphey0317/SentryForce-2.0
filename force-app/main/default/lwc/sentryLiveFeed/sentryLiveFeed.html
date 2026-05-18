@@ -1,0 +1,19 @@
+<template>
+    <lightning-card title="Live Event Feed">
+        <div class="slds-p-around_medium">
+            <template if:true={events.length}>
+                <template for:each={events} for:item="eventRecord">
+                    <p key={eventRecord.Id} class="slds-m-bottom_x-small">
+                        <strong>{eventRecord.Event_Type__c}</strong>
+                        · {eventRecord.Event_Source__c}
+                        · score {eventRecord.Risk_Score__c}
+                        · anomaly {eventRecord.Anomaly_Score__c}
+                    </p>
+                </template>
+            </template>
+            <template if:false={events.length}>
+                <p>No events yet.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>
