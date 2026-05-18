@@ -1,0 +1,17 @@
+<apex:page>
+    <h1>SentryForce 2.0 Demo</h1>
+    <p>This is a simple Visualforce demo page for the repository.</p>
+
+    <apex:pageBlock title="Demo Actions">
+        <apex:pageBlockSection columns="1">
+            <apex:outputText value="Visualforce is connected and rendering successfully." />
+            <apex:commandButton value="Run Demo" rerender="resultPanel" />
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+    <apex:outputPanel id="resultPanel">
+        <apex:pageBlock title="Demo Result">
+            <apex:outputText value="SentryForce 2.0 demo executed." />
+        </apex:pageBlock>
+    </apex:outputPanel>
+</apex:page>
