@@ -50,7 +50,7 @@
                 <leftValueReference>myVariable_myEvent.Username</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
-                    <stringValue>cicd-username@company.com</stringValue>
+                    <stringValue>REPLACE_WITH_CICD_USERNAME</stringValue>
                 </rightValue>
             </conditions>
             <connector>

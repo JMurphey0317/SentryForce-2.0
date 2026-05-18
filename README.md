@@ -86,11 +86,16 @@ sf project deploy start --source-dir force-app --target-org <alias>
 
 ### Assign policies and configure Slack
 1. Update `Sentry_Integration_Config__mdt.Slack_Default` with your webhook endpoint and enable it.
-2. Replace placeholder transaction security notification users (`username@company.com`) in `force-app/main/default/transactionSecurityPolicies/*.transactionSecurityPolicy-meta.xml` with valid org usernames/emails.
-3. Update the CI/CD user condition in `force-app/main/default/flows/PolicyCondition_AlertCriticalPermissionAs.flow-meta.xml` (`cicd-username@company.com`) to your environment's deployment user.
-4. Schedule jobs:
+2. Replace transaction security placeholder user token (`REPLACE_WITH_ADMIN_EMAIL`) in `force-app/main/default/transactionSecurityPolicies/*.transactionSecurityPolicy-meta.xml` with valid org usernames/emails.
+3. Update the CI/CD user condition in `force-app/main/default/flows/PolicyCondition_AlertCriticalPermissionAs.flow-meta.xml` (`REPLACE_WITH_CICD_USERNAME`) to your environment's deployment user.
+4. Update Slack endpoint token (`REPLACE_WITH_SLACK_WEBHOOK`) in `force-app/main/default/customMetadata/Sentry_Integration_Config__mdt.Slack_Default.md-meta.xml`.
+5. Schedule jobs:
    - `SentryRetentionService.CleanupBatch`
    - `SentryElfRetrievalService`
+6. Run pre-deploy placeholder validation:
+```bash
+./scripts/event-monitoring/validate-placeholders.sh
+```
 
 ### Run tests
 ```bash

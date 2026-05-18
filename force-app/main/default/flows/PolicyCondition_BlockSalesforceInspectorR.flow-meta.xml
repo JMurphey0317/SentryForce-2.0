@@ -67,7 +67,7 @@
         </rules>
     </decisions>
     <interviewLabel>PolicyCondition_BlockSalesforceInspectorR</interviewLabel>
-    <label>PolicyConditionBlockSalesforceInspectorR</label>
+    <label>PolicyCondition_BlockSalesforceInspectorR</label>
     <processType>TransactionSecurityFlow</processType>
     <startElementReference>myDecision</startElementReference>
     <status>Draft</status>

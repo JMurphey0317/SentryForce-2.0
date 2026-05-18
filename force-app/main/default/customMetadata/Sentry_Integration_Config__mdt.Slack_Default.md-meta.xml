@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>Endpoint__c</field>
-        <value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">https://hooks.slack.com/services/replace/me</value>
+        <value xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">REPLACE_WITH_SLACK_WEBHOOK</value>
     </values>
 </CustomMetadata>

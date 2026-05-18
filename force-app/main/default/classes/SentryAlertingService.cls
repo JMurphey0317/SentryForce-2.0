@@ -25,22 +25,28 @@ public with sharing class SentryAlertingService {
             return;
         }
 
-        HttpRequest request = new HttpRequest();
-        request.setMethod('POST');
-        request.setEndpoint(configs[0].Endpoint__c);
-        request.setHeader('Content-Type', 'application/json');
-        request.setBody(JSON.serialize(new Map<String, Object>{
+        sendSlackNotification(configs[0].Endpoint__c, new Map<String, Object>{
             'text' => 'SentryForce Alert: ' + alertRecord.Message__c,
             'eventType' => eventRecord.Event_Type__c,
             'riskScore' => riskResult.score,
             'factors' => riskResult.factors
-        }));
+        });
+    }
+
+    @TestVisible
+    private static void sendSlackNotification(String endpoint, Map<String, Object> payload) {
+        HttpRequest request = new HttpRequest();
+        request.setMethod('POST');
+        request.setEndpoint(endpoint);
+        request.setHeader('Content-Type', 'application/json');
+        request.setBody(JSON.serialize(payload));
 
         Http http = new Http();
         try {
             http.send(request);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Slack notification failed: ' + e.getMessage());
+            String safeEndpoint = String.isBlank(endpoint) ? 'n/a' : '***' + endpoint.substring(Math.max(endpoint.length() - 8, 0));
+            System.debug(LoggingLevel.WARN, 'Slack notification failed for endpoint ' + safeEndpoint + ': ' + e.getMessage() + '\n' + e.getStackTraceString());
         }
     }
 }

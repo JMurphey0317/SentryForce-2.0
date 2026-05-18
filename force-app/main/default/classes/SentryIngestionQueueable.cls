@@ -15,9 +15,7 @@ public with sharing class SentryIngestionQueueable implements Queueable {
             envelope.source = (String) item.get('source');
             envelope.eventType = (String) item.get('eventType');
             envelope.actorId = (String) item.get('actorId');
-            envelope.occurredAt = item.containsKey('occurredAt') && item.get('occurredAt') != null
-                ? Datetime.valueOfGmt(String.valueOf(item.get('occurredAt')).replace('T', ' ').replace('Z', ''))
-                : System.now();
+            envelope.occurredAt = parseDatetime(item.get('occurredAt'));
             envelope.attributes = item.containsKey('attributes') && item.get('attributes') != null
                 ? (Map<String, Object>) item.get('attributes')
                 : new Map<String, Object>();
@@ -25,5 +23,28 @@ public with sharing class SentryIngestionQueueable implements Queueable {
         }
 
         SentryIngestionService.ingest(envelopes);
+    }
+
+    @TestVisible
+    private static Datetime parseDatetime(Object inputValue) {
+        if (inputValue == null) {
+            return System.now();
+        }
+
+        if (inputValue instanceof Datetime) {
+            return (Datetime) inputValue;
+        }
+
+        String value = String.valueOf(inputValue);
+        Pattern allowedIsoPattern = Pattern.compile('^[0-9TtZz:+\\-.]+$');
+        if (!allowedIsoPattern.matcher(value).matches()) {
+            return System.now();
+        }
+
+        try {
+            return (Datetime) JSON.deserialize('"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"', Datetime.class);
+        } catch (Exception e) {
+            return System.now();
+        }
     }
 }
