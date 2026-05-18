@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Retention rules by event type for operational and compliance data windows.</description>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <label>Sentry Retention Policy</label>
+    <pluralLabel>Sentry Retention Policies</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
