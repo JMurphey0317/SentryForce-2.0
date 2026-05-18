@@ -101,7 +101,5 @@ sf apex run test --test-level RunLocalTests --target-org <alias>
 This repo synthesizes implementation ideas inspired by:
 - `JMurphey0317/SentryMeta1` (ops helper scripting patterns)
 - `JMurphey0317/policy_sentry` and `JMurphey0317/SentryForce` (transaction security + detection concepts)
-- `jongpie/NebulaLogger` (structured observability architecture mindset)
-- `SeeSharpist/Nova-Salesforce-Logger` (durable event logging ideas)
 
 SentryForce 2.0 keeps Salesforce-native runtime patterns first, with modular extension points for future ML and external SIEM integrations.
