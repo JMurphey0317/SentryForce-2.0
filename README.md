@@ -104,17 +104,3 @@ sf project deploy start --source-dir force-app --target-org <alias>
 sf apex run test --tests SentryRiskEngineTest,SentryIngestionServiceTest,SentryCorrelationServiceTest --target-org <alias>
 ```
 
-## Architectural roadmap mapping
-The repository now reflects the phased roadmap in-order through:
-1. scalable ingestion optimization
-2. incident correlation
-3. live dashboard scaffolding
-4. secure Named Credential abstractions
-5. rule-builder metadata + simulator foundations
-6. suppression workflows
-7. SIEM delivery tracking
-8. replay orchestration
-9. analytics services
-10. anomaly enrichment
-
-This pass prioritizes deployable architecture, metadata models, service seams, and initial working slices so the platform can continue iterating without discarding the existing Salesforce-native foundation.
